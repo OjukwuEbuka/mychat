@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Row, Col, Form, Button } from 'react-bootstrap';
 import { gql, useMutation  } from '@apollo/client';
+import { Link } from 'react-router-dom';
 
 const REGISTER_USER = gql`
     mutation Register(
@@ -22,7 +23,7 @@ const REGISTER_USER = gql`
     }
 `
 
-const Register = () => {
+const Register = (props) => {
     
     const [variables, setVariables] = useState({
       email: "",
@@ -36,9 +37,10 @@ const Register = () => {
     const [registerUser, { loading }] = useMutation(REGISTER_USER, {
         update(_, res){
             console.log(res);
+            props.history.push('/login');
         },
         onError(err){
-            console.log(err.graphQLErrors[0].extensions.errors);
+            // console.log(err.graphQLErrors[0].extensions.errors);
             setErrors(err.graphQLErrors[0].extensions.errors);
         }
     });
@@ -101,9 +103,13 @@ const Register = () => {
                     onChange={inputVal} value={variables.confirmPassword} 
                 />
             </Form.Group>
-            <Button variant="success" type="submit" disabled={loading}>
-                { loading ? 'Loading' : 'Register'}
-            </Button>
+            <div className="text-center">
+                <Button variant="success" type="submit" disabled={loading}>
+                    { loading ? 'Loading' : 'Register'}
+                </Button>
+                <br />
+                <small>Already a member? <Link to="/login">Login.</Link></small>
+            </div>
             </Form>
         </Col>
     </Row>
