@@ -8,7 +8,6 @@ const { Op } = require('sequelize');
 module.exports = {
     Query: {
         getUsers: async (_, __, context) => {
-           
             try {
                 let user;
                 if(context.req.headers.authorization){
