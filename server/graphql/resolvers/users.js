@@ -23,7 +23,7 @@ module.exports = {
         },
         me: async  (_, __, { user }) => {
             try {
-                if(!user) throw AuthenticationError('Unauthenticated');                
+                if(!user) throw new AuthenticationError('Unauthenticated');                
     
                 return user;                
             } catch (err) {
