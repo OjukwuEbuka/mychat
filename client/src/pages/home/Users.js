@@ -21,7 +21,7 @@ const GET_USERS = gql`
 
 export default function Users() {
     const dispatch = useMessageDispatch();
-    const { users, user: selectedUser } = useMessageState();
+    const { users } = useMessageState();
 
     const {loading, data, error} = useQuery(GET_USERS, {
         onCompleted: data => dispatch({ type: 'SET_USERS', payload: data.getUsers }),
@@ -41,21 +41,19 @@ export default function Users() {
     } else if(users && users.length === 0){
         usersMarkup = <p>Loading...</p>
     } else if(users && users.length > 0){
-        let userClassName = "user-div d-flex p-3" ;
+        let userClassName = "user-div d-flex justify-content-center justify-content-md-start p-3" ;
         usersMarkup = users.map(user => (
             <div 
                 role="button"
-                className={user.username === selectedUser ?
+                className={user.selected ?
                     (userClassName + " bg-white") :
                     userClassName
                 }
                 key={user.username} 
-                onClick={() => dispatch({type: 'GET_USER', payload: user.username})}
+                onClick={() => dispatch({type: 'SET_SELECTED_USER', payload: user.username})}
             >
-                <Image src={user.imageUrl} roundedCircle className="mr-2" 
-                    style={{ width: 50, height: 50, objectFit: 'cover'}}
-                />
-                <div>
+                <Image src={user.imageUrl}  className="user-image" />
+                <div className="d-none d-md-block ml-2">
                     <p className="text-success">{ user.username }</p>
                     <p className="font-weight-light">
                         {user.latestMessage ? user.latestMessage.content : 'You are now connected'}
@@ -66,7 +64,7 @@ export default function Users() {
     }
 
     return (
-        <Col className="p-0 bg-secondary" xs={4}>
+        <Col className="p-0 bg-secondary" xs={2} md={4}>
             {usersMarkup}
         </Col>
     )

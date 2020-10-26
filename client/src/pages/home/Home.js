@@ -12,7 +12,8 @@ const Home = ({history}) => {
     const logout = (e) => {
         e.preventDefault();
         dispatch({ type: 'LOGOUT'});
-        history.push('/login');
+        // history.push('/login');
+        window.location.href = '/login'
     }
     
     return (
