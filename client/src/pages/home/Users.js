@@ -32,7 +32,7 @@ export default function Users() {
         //
     }
     if(data){
-        console.log(data)
+        // console.log(data)
     }
 
     let usersMarkup

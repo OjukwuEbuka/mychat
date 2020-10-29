@@ -60,13 +60,13 @@ export default function Messages() {
             }})
         }
     }, [messagesData]);
-
+    
     const submitMessage = e => {
         e.preventDefault();
         if(content.trim() === '' || !selectedUser) return;
+        setContent('');
 
         sendMessage({ variables: { to: selectedUser.username, content } })
-        setContent('');
 
     }
 
@@ -77,8 +77,9 @@ export default function Messages() {
     } else if(messagesLoading) {
         selectedChatMarkup = <p className="info-text">Loading...</p>
     } else if(messages.length > 0) {
+        // console.log(messages)
         selectedChatMarkup = messagesData && messagesData.getMessages.length > 0 ? (
-            messagesData.getMessages.map( (msg, index) => (
+            messages.map( (msg, index) => (
                 <Fragment key={msg.uuid}>
                     <Message  message={msg} />
                     {index === messages.length - 1 && (
@@ -100,14 +101,14 @@ export default function Messages() {
                 {selectedChatMarkup}
             </div>
             <div>
-                <Form onClick={submitMessage}>
+                <Form onSubmit={submitMessage}>
                     <Form.Group className="d-flex align-items-center">
                         <Form.Control
                             type="text"
                             className="message-input p-4 bg-secondary border-0"
                             placeholder="Type a message.."
                             value={content}
-                            onChange={e => {e.preventDefault(); setContent(e.target.value)}}
+                            onChange={e => setContent(e.target.value)}
                         />
                         <i 
                             className="fas fa-paper-plane fa-2x text-primary ml-2" 
