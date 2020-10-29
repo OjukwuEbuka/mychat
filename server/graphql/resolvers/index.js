@@ -15,5 +15,8 @@ module.exports = {
     Mutation: {
         ...messageResolvers.Mutation,
         ...userResolvers.Mutation,
+    },
+    Subscription: {
+        ...messageResolvers.Subscription,
     }
 };
