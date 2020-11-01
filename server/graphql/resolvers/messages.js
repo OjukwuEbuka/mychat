@@ -1,5 +1,10 @@
-const { User, Message } = require('../../models');
-const { UserInputError, AuthenticationError, withFilter } = require('apollo-server');
+const { User, Message, Reaction } = require('../../models');
+const { 
+    UserInputError, 
+    AuthenticationError, 
+    withFilter, 
+    ForbiddenError 
+} = require('apollo-server');
 const { Op } = require('sequelize');
 
 module.exports = {
@@ -57,7 +62,49 @@ module.exports = {
                 console.log(err)
                 throw err;
             }
-        }
+        },
+        reactToMessage: async (_, {uuid, content }, { user }) => {
+            const reactions = ['❤️', '😆', '😯', '😢', '😡', '👍', '👎'];
+            try {
+                if(!reactions.includes(content)){
+                    throw new UserInputError('Invalid reaction');
+                }
+
+                // Get User
+                const username = user ? user.username : '';
+                user = await User.findOne({ where: { username }});
+                if(!user) throw new AuthenticationError('Unauthenticated');
+
+                // Get Message
+                const message = await Message.findOne({ where: { uuid }});
+                if(!message) throw new UserInputError('Message not found');
+
+                if(message.from !== user.username && message.to !== user.username){
+                    throw new ForbiddenError('Unauthorized');
+                }
+
+                let reaction = await Reaction.findOne({
+                    where: { messageId: message.id, userId: user.id }
+                })
+
+                if(reaction){
+                    // Update existing reaction
+                    reaction.content = content;
+                    await reaction.save();
+                } else {
+                    // create new reaction
+                    reaction = await Reaction.create({
+                        messageId: message.id,
+                        userId: user.id,
+                        content
+                    })
+                }
+
+                return reaction;
+            } catch (err) {
+                throw err;
+            }
+        },
     },
     Subscription: {
         newMessage: {

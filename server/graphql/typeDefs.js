@@ -25,6 +25,14 @@ module.exports = gql`
         createdAt: String!
     }
 
+    type Reaction {
+        uuid: String!
+        content: String!
+        createdAt: String!
+        Message: Message!
+        User: User!
+    }
+
     type Mutation {
         register(
             username: String!,
@@ -33,6 +41,7 @@ module.exports = gql`
             confirmPassword: String!
         ): User!
         sendMessage(to:String! content:String!): Message!
+        reactToMessage(uuid: String!, content: String!): Reaction!
     }
 
     type Subscription{
