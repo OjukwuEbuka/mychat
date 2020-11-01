@@ -29,7 +29,8 @@ const Login = (props) => {
         onError: (err) => setErrors(err.graphQLErrors[0].extensions.errors),
         onCompleted(data){
             dispatch({ type: 'LOGIN', payload: data.login });
-            props.history.push('/');
+            // props.history.push('/');
+            window.location.href = '/';
         }
     });
 

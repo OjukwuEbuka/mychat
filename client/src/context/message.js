@@ -33,9 +33,11 @@ const messageReducer = (state, action) => {
         case 'ADD_MESSAGE':
             usersCopy = [...state.users];
             userIndex = usersCopy.findIndex(u => u.username === username);
+            // console.log(usersCopy[userIndex].messages);
             let newUser = {
                 ...usersCopy[userIndex],
-                messages: [message, ...usersCopy[userIndex].messages]
+                messages: usersCopy[userIndex].messages ? [message, ...usersCopy[userIndex].messages] : null,
+                latestMessage: message,
             }
             usersCopy[userIndex] = newUser;
             // console.log(state, usersCopy)

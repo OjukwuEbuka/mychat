@@ -39,10 +39,6 @@ export default function Messages() {
     const messages = selectedUser?.messages;
     const [getMessages, {loading: messagesLoading, data: messagesData}] = useLazyQuery(GET_MESSAGES);
     const [sendMessage] = useMutation(SEND_MESSAGE, {
-        onCompleted: data => dispatch({ type: 'ADD_MESSAGE', payload: {
-            username: selectedUser.username,
-            message: data.sendMessage
-        }}),
         onError: err => console.log(err),
     });
 
@@ -78,7 +74,7 @@ export default function Messages() {
         selectedChatMarkup = <p className="info-text">Loading...</p>
     } else if(messages.length > 0) {
         // console.log(messages)
-        selectedChatMarkup = messagesData && messagesData.getMessages.length > 0 ? (
+        selectedChatMarkup = (messagesData && messagesData.getMessages.length > 0) || (messages.length > 0) ? (
             messages.map( (msg, index) => (
                 <Fragment key={msg.uuid}>
                     <Message  message={msg} />
