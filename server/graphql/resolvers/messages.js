@@ -22,6 +22,7 @@ module.exports = {
                         to: {[Op.in]: usernames},
                      },
                     order: [['createdAt', 'DESC']],
+                    include: [{ model: Reaction, as: 'reactions' }],
                 });
 
                 return messages;
@@ -84,7 +85,7 @@ module.exports = {
                 }
 
                 let reaction = await Reaction.findOne({
-                    where: { messageId: message.id, userId: user.id }
+                    where: { messageId: message.id, userId: user.id, content }
                 })
 
                 if(reaction){

@@ -5,7 +5,7 @@ const MessageDispatchContext = createContext();
 
 const messageReducer = (state, action) => {
     let usersCopy, userIndex;
-    const { username, message, messages } = action.payload
+    const { username, message, messages, reaction } = action.payload
     switch (action.type) {
         case 'SET_USERS':
             return  {
@@ -33,6 +33,7 @@ const messageReducer = (state, action) => {
         case 'ADD_MESSAGE':
             usersCopy = [...state.users];
             userIndex = usersCopy.findIndex(u => u.username === username);
+            message.reactions = [];
             // console.log(usersCopy[userIndex].messages);
             let newUser = {
                 ...usersCopy[userIndex],
@@ -41,6 +42,45 @@ const messageReducer = (state, action) => {
             }
             usersCopy[userIndex] = newUser;
             // console.log(state, usersCopy)
+            return {
+                ...state,
+                users: usersCopy
+            }
+        case 'ADD_REACTION':
+            usersCopy = [...state.users];
+            userIndex = usersCopy.findIndex(u => u.username === username);
+
+            // Make shallow copy of user
+            let userCopy = { ...usersCopy[userIndex]};
+
+            const messageIndex = userCopy.messages?.findIndex(msg => msg.uuid === reaction.message.uuid)
+
+            if(messageIndex > -1){
+                //make a shallow copy of user messages 
+                let messagesCopy = [...userCopy.messages];
+
+                //make a shallow copy of user message reactions
+                let reactionsCopy = [...messagesCopy[messageIndex].reactions];
+
+                const reactionIndex = reactionsCopy.findIndex(r => r.uuid === reaction.uuid)
+
+                if(reactionIndex > -1){
+                    // Reaction exists update it
+                    reactionsCopy[reactionIndex] = reaction;
+                }else {
+                    // add new reaction
+                    reactionsCopy = [...reactionsCopy, reaction];
+                }
+
+                messagesCopy[messageIndex] = {
+                    ...messagesCopy[messageIndex],
+                    reactions: reactionsCopy
+                }
+
+                userCopy = { ...userCopy, messages: messagesCopy }
+                usersCopy[userIndex] = userCopy;
+            }
+
             return {
                 ...state,
                 users: usersCopy
